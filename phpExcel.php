@@ -46,13 +46,35 @@ for ($row = 0 ; $row <= $highestRow ; $row++){
 
 //print_r($arrayCantidad);
 $spreadsheet = new Spreadsheet();
+$spreadsheet->getDefaultStyle()->getFont()->setName('Century Gothic');
 $sheet = $spreadsheet->getActiveSheet();
 
 $sheet->setCellValue('A1', 'Cantidad');
 $sheet->setCellValue('B1', 'Especie');
 $sheet->setCellValue('C1', 'Variedad');
 $sheet->setCellValue('D1', 'Unitario');
-$sheet->setCellValue('E2', 'Total');
+$sheet->setCellValue('E1', 'Total');
+
+$sheet->getStyle("A1")->getFont()->setSize(14);
+$sheet->getStyle("B1")->getFont()->setSize(14);
+$sheet->getStyle("C1")->getFont()->setSize(14);
+$sheet->getStyle("D1")->getFont()->setSize(14);
+$sheet->getStyle("E1")->getFont()->setSize(14);
+
+
+$sheet->getStyle('A1:E1')->applyFromArray(
+    array(
+       'font'  => array(
+           'bold'  =>  true,
+           'borders' => [
+            'outline' => [
+                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                'color' => ['argb' => 'FFFF0000'],
+            ],
+        ],
+       )
+    )
+  );
 
 $cantidad = count($arrayCantidad);
 //print("cantidad: $cantidad");
@@ -66,16 +88,21 @@ for($i=0;$i<count($arrayCantidad); $i++){
     $sheet->setCellValue("C$r", $arrayVariedad[$i]);
     $sheet->setCellValue("D$r", $arrayPrecio[$i]);
     if($arrayPrecio[$i]!=='NETO '){
-        $sheet->setCellValue("E$r", "=A$r*D$r");
+        if($arrayPrecio[$i]!=''){
+            $sheet->setCellValue("E$r", "=A$r*D$r");
+        }
     }else{
         $ant = $r-1;
         $cellTotal = $r+4;
         $cellIva = $r+3;
         $cellNeto = $r;
-
-        /*$sheet->setCellValue("E$cellTotal", "=SUM(E1:E$ant)");
-        $sheet->setCellValue("E$cellIva", "=E$cellTotal*0,19");
-        /*$sheet->setCellValue("E$cellNeto", "=E$cellNeto/1,19");*/
+        
+        $sheet->setCellValue("E$cellTotal", "=SUM(E1:E$ant)");
+        $sheet->setCellValue("E$cellIva", "=(E$cellNeto*0.19)");
+        $sheet->setCellValue("D$cellTotal", "TOTAL");
+        $sheet->setCellValue("D$cellIva", "IVA");
+        $sheet->setCellValue("E$cellNeto", "=E$cellTotal/1.19");
+        
     }
 }
 
@@ -88,5 +115,4 @@ $writer->save($name);
 /*header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header("Content-Disposition: attachment; filename=$name");
             $writer->save("php://output");*/
-print("Termino");
 exit;
