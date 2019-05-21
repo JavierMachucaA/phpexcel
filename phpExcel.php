@@ -66,13 +66,13 @@ $sheet->getStyle('A1:E1')->applyFromArray(
     array(
        'font'  => array(
            'bold'  =>  true,
-           'borders' => [
-            'outline' => [
-                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
-                'color' => ['argb' => 'FFFF0000'],
-            ],
+           
+       ),'borders' => [
+        'outline' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+            'color' => ['argb' => '00000000'],
         ],
-       )
+    ],
     )
   );
 
